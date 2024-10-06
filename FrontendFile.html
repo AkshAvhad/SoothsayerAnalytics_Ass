@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demand Forecasting App</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .sidebar {
+            width: 20%;
+            padding: 10px;
+            background-color: #f4f4f4;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+        }
+        .content {
+            width: 75%;
+            padding: 10px;
+        }
+        .chart-container {
+            width: 100%;
+            margin: 20px 0;
+        }
+        #errorCharts {
+            display: flex;
+            justify-content: space-between;
+        }
+        .error-chart {
+            width: 48%;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Demand Forecasting</h1>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>Input Options</h3>
+            <label for="stockCode">Select a Stock Code:</label>
+            <select id="stockCode">
+                <option value="MSFT">MSFT</option>
+                <option value="AAPL">AAPL</option>
+                <option value="GOOGL">GOOGL</option>
+                <option value="AMZN">AMZN</option>
+                <option value="TSLA">TSLA</option>
+                <option value="FB">FB</option>
+                <option value="NFLX">NFLX</option>
+            </select>
+        </div>
+
+        <div class="content">
+            <h2>Demand Overview for <span id="selectedStock">MSFT</span></h2>
+            
+            <div class="chart-container">
+                <canvas id="demandChart"></canvas>
+            </div>
+
+            <div id="errorCharts">
+                <div class="error-chart">
+                    <h3>Training Error Distribution</h3>
+                    <canvas id="trainErrorChart"></canvas>
+                </div>
+                <div class="error-chart">
+                    <h3>Testing Error Distribution</h3>
+                    <canvas id="testErrorChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for the demand chart
+        const demandData = {
+            labels: ['2018', '2019', '2020', '2021', '2022'],
+            datasets: [{
+                label: 'Train Actual Demand',
+                data: [120, 150, 180, 200, 250],
+                borderColor: 'blue',
+                fill: false,
+            }, {
+                label: 'Train Predicted Demand',
+                data: [125, 160, 185, 205, 260],
+                borderColor: 'green',
+                fill: false,
+            }, {
+                label: 'Test Predicted Demand',
+                data: [130, 170, 190, 210, 270],
+                borderColor: 'orange',
+                fill: false,
+            }]
+        };
+
+        const demandChart = new Chart(document.getElementById('demandChart'), {
+            type: 'line',
+            data: demandData,
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Actual vs Predicted Demand for MSFT'
+                }
+            }
+        });
+
+        // Error distribution data for the bar charts
+        const trainErrorData = {
+            labels: ['-5', '-3', '-1', '1', '3', '5'],
+            datasets: [{
+                label: 'Training Error',
+                data: [2, 4, 6, 8, 4, 2],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const testErrorData = {
+            labels: ['-5', '-3', '-1', '1', '3', '5'],
+            datasets: [{
+                label: 'Testing Error',
+                data: [3, 5, 7, 9, 5, 3],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const trainErrorChart = new Chart(document.getElementById('trainErrorChart'), {
+            type: 'bar',
+            data: trainErrorData,
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Training Error Distribution'
+                }
+            }
+        });
+
+        const testErrorChart = new Chart(document.getElementById('testErrorChart'), {
+            type: 'bar',
+            data: testErrorData,
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Testing Error Distribution'
+                }
+            }
+        });
+
+        // Update selected stock name
+        document.getElementById('stockCode').addEventListener('change', function() {
+            const selectedStock = this.value;
+            document.getElementById('selectedStock').innerText = selectedStock;
+        });
+    </script>
+
+</body>
+</html>
